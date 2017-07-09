@@ -5,6 +5,8 @@ ext {
             hamcrest: '1.3',
             cglib: '3.1',
             objenesis: '2.1',
+            slf4j: '1.7.25',
+            springBoot: '1.5.4.RELEASE',
     ]
 }
 
@@ -39,7 +41,7 @@ apply plugin: 'idea'
 
 dependencyManagement {
     imports {
-        mavenBom 'org.springframework.boot:spring-boot-dependencies:${ver.springBoot}'
+        mavenBom "org.springframework.boot:spring-boot-dependencies:${ver.springBoot}"
     }
 }
 
@@ -55,10 +57,8 @@ repositories {
 
 // In this section you declare the dependencies for your production and test code
 dependencies {
-    compile "org.slf4j:slf4j-api"
-    compile 'org.slf4j:log4j-over-slf4j'
-
-    compile "io.reactivex.rxjava2:rxjava:${ver.rxjava}"
+    compile "org.slf4j:slf4j-api:${ver.slf4j}"
+    compile "org.slf4j:log4j-over-slf4j:${ver.slf4j}"
 
     // mandatory dependencies for using Spock
     testCompile "org.codehaus.groovy:groovy-all:${ver.groovy}"
@@ -81,6 +81,9 @@ compileJava {
 // Spock works with Java 1.5 and above
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
+
+// Change the output directory for the main source set back to the old path
+sourceSets.main.output.classesDir = new File(buildDir, "classes/main")
 
 idea {
     module {
