@@ -31,3 +31,11 @@ This solution also allows for a large degree of concurrency, and will solve an a
 > In their analysis they derive a system of preference levels from the distribution of the forks and their clean/dirty states. They show that this system may describe an acyclic graph, and if so, the operations in their protocol cannot turn that graph into a cyclic one. This guarantees that deadlock cannot occur. However, if the system is initialized to a perfectly symmetric state, like all philosophers holding their left side forks, then the graph is cyclic at the outset, and their solution cannot prevent a deadlock. Initializing the system so that philosophers with lower IDs have dirty forks ensures the graph is initially acyclic.
 
 [source](https://en.wikipedia.org/wiki/Dining_philosophers_problem#Chandy.2FMisra_solution)
+
+<details>
+  <summary>Tips:</summary>
+  <ul>
+    <li>Consider usage of Actor pattern</li>
+    <li>library that easier actor pattern usage: [kontrator](https://github.com/RuedigerMoeller/kontraktor)</li>
+  </ul>
+</details>
