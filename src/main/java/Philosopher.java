@@ -1,47 +1,57 @@
-/**
- * Created by wojciech on 23.07.17.
- */
-public class Philosopher implements Runnable {
+import java.util.Optional;
 
-    private int number;
-    private Fork leftFork;
-    private Fork rightFork;
+public class Philosopher {
 
-    public Philosopher(Fork leftFork, Fork rightFork, int number) {
-        this.leftFork = leftFork;
-        this.rightFork = rightFork;
-        this.number = number;
+    static String PHILOSOPHER_CAN_NOT_EAT_WITHOUT_TOO_FORKS = "To eat everyone need too forks";
+
+    protected Fork mainFork, supportedFork;
+
+    public Philosopher(Fork mainFork, Fork supportedFork) {
+        validateFork(mainFork);
+        validateFork(supportedFork);
+
+        this.mainFork = mainFork;
+        this.supportedFork = supportedFork;
     }
 
-    private void sayWhatYouAreDoing(String action) throws InterruptedException {
-        System.out.println( "Philosopher " + this.number + action );
-        Thread.sleep(((int) (Math.random() * 100)));
+    public Philosopher() {
     }
 
-    @Override
-    public void run() {
-        try {
-            while (true) {
-                sayWhatYouAreDoing("I'm thinking");
+    private void validateFork(Fork fork){
+        Optional.ofNullable(fork)
+                .orElseThrow(() -> new IllegalArgumentException(PHILOSOPHER_CAN_NOT_EAT_WITHOUT_TOO_FORKS));
+    }
 
-                synchronized (leftFork) {
+    public Fork getMainFork() {
+        return mainFork;
+    }
 
-                    sayWhatYouAreDoing(" I picked up left fork");
+    public Fork getSupportedFork() {
+        return supportedFork;
+    }
 
-                    synchronized (rightFork) {
+    public void setLeftFork(Fork leftFork, int numberInTheTable) {
 
-                        sayWhatYouAreDoing("I picked up right fork");
-                        sayWhatYouAreDoing("I'm eating");
-                        sayWhatYouAreDoing("I'm putting down right fork");
+        validateFork(leftFork);
 
-                    }
+        if(isRightHanded(numberInTheTable))
+            this.supportedFork = leftFork;
+        else
+            this.mainFork = leftFork;
+    }
 
-                    sayWhatYouAreDoing("I'm backing to thinking");
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            return;
-        }
+
+    public void setRightFork(Fork rightFork, int numberInTheTable) {
+
+        validateFork(rightFork);
+
+        if(isRightHanded(numberInTheTable))
+            this.mainFork = rightFork;
+        else
+            this.supportedFork = rightFork;
+    }
+
+    private boolean isRightHanded(int numberInTheTable){
+        return numberInTheTable % 2 == 0;
     }
 }

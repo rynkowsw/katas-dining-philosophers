@@ -1,54 +1,50 @@
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.stream.IntStream;
 
 public class Table {
 
-    ArrayList<Philosopher> philosophers;
-
-
-    public Table() {
-        createPhilosophers(5);
+    public LinkedList<Philosopher>  createPhilosophersInTable(int number)
+    {
+        LinkedList<Philosopher> philosophers = createNEmptyPhilosophers(number);
+        addForkEveryPhilosopher(philosophers);
+        setSharedForkBetweenLastAndFirstPhilosopher(philosophers);
+        return philosophers;
     }
 
-    private void createPhilosophers(int number) {
+    private void addForkEveryPhilosopher(LinkedList<Philosopher> philosophers) {
+        int numberOfPhilosophersWithoutLastOne = philosophers.size()-1;
 
-        ArrayList<Fork> forks = new ArrayList<>();
+        IntStream.range(0, numberOfPhilosophersWithoutLastOne)
+                .forEach(
+                        nbr ->  {
+                            Philosopher philosopher = philosophers.get(nbr);
+                            Philosopher nextPhilosopher = philosophers.get(nbr+1);
 
-        for (int i = 0; i < number; i++) {
-            forks.add(new Fork());
-        }
+                            Fork fork = new Fork();
+                            philosopher.setRightFork(fork, nbr);
+                            nextPhilosopher.setLeftFork(fork, nbr+1);
+                        });
 
-        ArrayList<Philosopher> philosophers = new ArrayList<>();
-
-        for (int i = 0; i < forks.size(); i++) {
-
-            Fork leftFork = forks.get(i);
-            Fork rightFork = forks.get((i + 1) % number);
-
-            Philosopher philosopher = new Philosopher(rightFork, leftFork, i);
-            if (i % 2 == 0 ) {
-                philosopher = new Philosopher(leftFork, rightFork, i);
-            }
-
-            philosophers.add(philosopher);
-        }
-
-
-        this.philosophers = philosophers;
-    }
-
-    public void eatingPhilosophers() {
-        philosophers.forEach(philosopher -> {
-            Thread t = new Thread(philosopher);
-            t.start();
-        });
-    }
-
-
-    public static void main(String[] args) throws Exception {
-
-        Table table = new Table();
-        table.eatingPhilosophers();
 
     }
 
+    private void setSharedForkBetweenLastAndFirstPhilosopher( LinkedList<Philosopher> philosophers ){
+        Philosopher first = philosophers.getFirst();
+        Philosopher last = philosophers.getLast();
+
+        Fork sharedFork = new Fork();
+
+        first.setLeftFork(sharedFork, 0);
+        last.setRightFork(sharedFork, philosophers.size() -1 );
+
+    }
+
+    private  LinkedList<Philosopher> createNEmptyPhilosophers(int number) {
+
+        LinkedList<Philosopher> philosophers = new LinkedList<>();
+
+        IntStream.range(0, number).forEach(nbr ->  philosophers.add(new Philosopher()));
+
+        return philosophers;
+    }
 }
